@@ -110,6 +110,12 @@ AStarNode* AStarNodes::getNodeByPosition(Uint32 xy)
 Map::Map()
 {
 	g_effects.reserve(EFFECT_MAX_INGAME_EFFECTS);
+  m_onscreenMessages[ONSCREEN_MESSAGE_BOTTOM]     = new ScreenText(ONSCREEN_MESSAGE_BOTTOM);
+  m_onscreenMessages[ONSCREEN_MESSAGE_CENTER_LOW] = new ScreenText(ONSCREEN_MESSAGE_CENTER_LOW);
+  m_onscreenMessages[ONSCREEN_MESSAGE_CENTER_HIGH]= new ScreenText(ONSCREEN_MESSAGE_CENTER_HIGH);
+  m_onscreenMessages[ONSCREEN_MESSAGE_TOP]        = new ScreenText(ONSCREEN_MESSAGE_TOP);
+  m_onscreenMessages[ONSCREEN_MESSAGE_LAST]       = new ScreenText(ONSCREEN_MESSAGE_LAST);
+
 }
 
 Map::~Map()
@@ -147,6 +153,17 @@ Map::~Map()
 		delete (*it);
 
 	m_staticTexts.clear();
+
+  if( m_onscreenMessages[ONSCREEN_MESSAGE_BOTTOM] != nullptr)
+    delete m_onscreenMessages[ONSCREEN_MESSAGE_BOTTOM];
+  if( m_onscreenMessages[ONSCREEN_MESSAGE_BOTTOM] != nullptr)
+    delete m_onscreenMessages[ONSCREEN_MESSAGE_CENTER_LOW];
+  if( m_onscreenMessages[ONSCREEN_MESSAGE_CENTER_HIGH] != nullptr)
+    delete m_onscreenMessages[ONSCREEN_MESSAGE_CENTER_HIGH];
+  if( m_onscreenMessages[ONSCREEN_MESSAGE_TOP] != nullptr)
+    delete m_onscreenMessages[ONSCREEN_MESSAGE_TOP];
+  if( m_onscreenMessages[ONSCREEN_MESSAGE_LAST] != nullptr)
+    delete m_onscreenMessages[ONSCREEN_MESSAGE_LAST];
 }
 
 Tile* Map::getTile(const Position& position)
@@ -194,7 +211,7 @@ Tile* Map::resetTile(const Position& position, Sint32 offset)
 		tile = new Tile(position);
 		return tile;
 	}
-	
+
 	return tile;
 }
 
@@ -613,7 +630,7 @@ void Map::renderInformations(Sint32 px, Sint32 py, Sint32 pw, Sint32 ph, float s
 		else
 			g_engine.getRender()->drawLightMap_new(g_light.getLightMap(), px + SDL_static_cast(Sint32, offsetX * scale), py + SDL_static_cast(Sint32, offsetY * scale), scaledSize, GAME_MAP_WIDTH, GAME_MAP_HEIGHT);
 	}
-	
+
 	pw += px;
 	ph += py;
 	for(std::vector<StaticText*>::iterator it = m_staticTexts.begin(); it != m_staticTexts.end();)
@@ -653,17 +670,17 @@ void Map::renderInformations(Sint32 px, Sint32 py, Sint32 pw, Sint32 ph, float s
 		animatedText->render(screenx, screeny, px, py, pw, ph);
 		++it;
 	}
-	m_onscreenMessages[ONSCREEN_MESSAGE_BOTTOM].render(px, py, pw, ph);
-	m_onscreenMessages[ONSCREEN_MESSAGE_CENTER_LOW].render(px, py, pw, ph);
-	m_onscreenMessages[ONSCREEN_MESSAGE_CENTER_HIGH].render(px, py, pw, ph);
-	m_onscreenMessages[ONSCREEN_MESSAGE_TOP].render(px, py, pw, ph);
+	m_onscreenMessages[ONSCREEN_MESSAGE_BOTTOM]->render(px, py, pw, ph);
+	m_onscreenMessages[ONSCREEN_MESSAGE_CENTER_LOW]->render(px, py, pw, ph);
+	m_onscreenMessages[ONSCREEN_MESSAGE_CENTER_HIGH]->render(px, py, pw, ph);
+	m_onscreenMessages[ONSCREEN_MESSAGE_TOP]->render(px, py, pw, ph);
 
 	UTIL_refreshBattleWindow();
 }
 
 void Map::addOnscreenText(OnscreenMessages position, MessageMode mode, const std::string& text)
 {
-	m_onscreenMessages[position].addMessage(mode, text);
+	m_onscreenMessages[position]->addMessage(mode, text);
 }
 
 void Map::addAnimatedText(const Position& position, Uint8 color, const std::string& text)
@@ -937,7 +954,7 @@ void Map::removeMagicEffects(const Position& position, Uint16 effectId)
 	Tile* tile = getTile(position);
 	if(tile)
 		tile->removeMagicEffects(effectId);
-	
+
 	std::vector<DistanceEffect*>& distanceEffects = m_distanceEffects[position.z];
 	for(std::vector<DistanceEffect*>::iterator it = distanceEffects.begin(); it != distanceEffects.end();)
 	{
@@ -956,7 +973,7 @@ PathFind Map::findPath(std::vector<Direction>& directions, const Position& start
 	directions.clear();
 	if(startPos == endPos)
 		return PathFind_ReturnSamePosition;
-	
+
 	if(startPos.z < endPos.z)
 		return PathFind_ReturnFirstGoDownStairs;
 	else if(startPos.z > endPos.z)
@@ -1017,7 +1034,7 @@ PathFind Map::findPath(std::vector<Direction>& directions, const Position& start
 				break;
 			return PathFind_ReturnNoWay;
 		}
-		
+
 		const Sint32 x = n->x;
 		const Sint32 y = n->y;
 		if(((n->x ^ endPos.x) | (n->y ^ endPos.y)) == 0 && (!found || n->f < found->f))

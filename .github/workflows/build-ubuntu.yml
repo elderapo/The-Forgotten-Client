@@ -1,0 +1,85 @@
+name: Build on Ubuntu
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - linux
+      - v*
+
+    tags:
+      - v*
+
+  pull_request:
+    paths:
+      - cmake/**
+      - src/**
+      - CMakeLists.txt
+      - .github/**
+
+jobs:
+  job:
+    name: ${{ matrix.os }}-${{ matrix.buildtype }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04]
+        buildtype: [Release]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install Dependencies
+        run: >
+          sudo apt-get update && sudo apt-get install build-essential
+          libgmp-dev zip wget tar binutils freeglut3-dev git libgl1-mesa-dev
+          libgl1-mesa-glx libglew-dev libglew1.5 libglew1.5-dev libglfw3
+          libglfw3-dev libglm-dev libglu1-mesa libglu1-mesa-dev libgmp-dev
+          libgmp10 libgmp3-dev libgmpxx4ldbl libssl-dev libx11-dev
+          mesa-common-dev openssl sudo xorg-dev
+
+      - name: Install cmake
+        run: |
+          git clone https://github.com/Kitware/CMake/
+          cd CMake
+          ./bootstrap
+          make -j`nproc`
+          sudo make install
+          cd ${{ runner.workspace }}
+
+      - name: Install sdl2
+        run: |
+          wget https://www.libsdl.org/release/SDL2-2.0.8.tar.gz
+          tar -xf SDL2-2.0.8.tar.gz
+          cd SDL2-2.0.8
+          mkdir build
+          cd build
+          cmake  ..
+          make -j`nproc`
+          sudo make install
+          cd ${{ runner.workspace }}
+
+      - name: Prepare build Environment
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_BUILD_TYPE=${{ matrix.buildtype }} ..
+
+      - name: Build
+        run: |
+          cd build
+          make -j `nproc`
+
+      - name: Prepare datapack contents
+        shell: bash
+        run: |
+          cd ..
+          zip -r The-Forgotten-Client.zip The-Forgotten-Client
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: The-Forgotten-Client-${{ matrix.os }}-${{ github.sha }}
+          path: ${{ runner.workspace }}/The-Forgotten-Client.zip

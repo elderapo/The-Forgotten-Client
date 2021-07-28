@@ -22,7 +22,14 @@
 #ifndef __FILE_RSA_h_
 #define __FILE_RSA_h_
 
-#include "Uint1024.h"
+#include "defines.h"
+
+#if defined(__linux__)
+	#include <gmp.h>
+#else
+	#include "Uint1024.h"
+#endif
+
 
 class RSA
 {
@@ -41,8 +48,12 @@ class RSA
 		void encrypt(Uint8* msg);
 
 	private:
+	#if defined(__linux__)
+		mpz_t m_mod, m_e;
+	#else
 		Uint1024 m_mod;
 		Uint32 m_e = 65537;
+	#endif
 };
 
 #endif /* __FILE_RSA_h_ */

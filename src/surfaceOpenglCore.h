@@ -26,6 +26,10 @@
 
 #if defined(SDL_VIDEO_RENDER_OGL)
 
+#if defined(__linux__)
+#include <GL/gl.h>
+#endif
+
 #define OPENGL_CORE_MAX_TEXTURES 16
 #define OPENGL_CORE_MAX_VERTICES 43656
 #define OPENGL_CORE_MAX_INDICES (OPENGL_CORE_MAX_VERTICES * 6 / 4)

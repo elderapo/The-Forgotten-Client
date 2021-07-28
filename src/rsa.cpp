@@ -23,19 +23,46 @@
 
 RSA::RSA()
 {
-	m_mod.fromString(CLIENT_RSA_KEY, 10);
+	#if defined(__linux__)
+		mpz_init2(m_mod, 1024);
+		mpz_init2(m_e, 1024);
+		mpz_set_str(m_mod, CLIENT_RSA_KEY, 10);
+		mpz_set_str(m_e, "65537", 10);
+	#else
+		m_mod.fromString(CLIENT_RSA_KEY, 10);
+	#endif
 }
 
 void RSA::setKey(const char* publicKey)
 {
-	m_mod.fromString(publicKey, 10);
+	#if defined(__linux__)
+		mpz_set_str(m_mod, publicKey, 10);
+	#else
+		m_mod.fromString(publicKey, 10);
+	#endif
 }
 
 void RSA::encrypt(Uint8* msg)
 {
-	Uint1024 plain;
-	plain.importData(msg);
+	#if defined(__linux__)
+		mpz_t plain, c;
+		mpz_init2(plain, 1024);
+		mpz_init2(c, 1024);
 
-	Uint1024 encrypted = base_uint_powm<1024>(plain, m_e, m_mod);
-	encrypted.exportData(msg);
+		mpz_import(plain, 128, 1, 1, 0, 0, msg);
+		mpz_powm(c, plain, m_e, m_mod);
+
+		size_t count = (mpz_sizeinbase(c, 2) + 7) / 8;
+		memset(msg, 0, 128 - count);
+		mpz_export(&msg[128 - count], NULL, 1, 1, 0, 0, c);
+
+		mpz_clear(c);
+		mpz_clear(plain);
+	#else
+		Uint1024 plain;
+		plain.importData(msg);
+
+		Uint1024 encrypted = base_uint_powm<1024>(plain, m_e, m_mod);
+		encrypted.exportData(msg);
+	#endif
 }

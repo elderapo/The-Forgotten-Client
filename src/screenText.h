@@ -23,6 +23,7 @@
 #define __FILE_SCREENTEXT_h_
 
 #include "position.h"
+#include "const.h"
 
 struct ScreenTextMessage
 {
@@ -50,7 +51,7 @@ class ScreenText
 		// non-moveable
 		ScreenText(ScreenText&&) = delete;
 		ScreenText& operator=(ScreenText&&) = delete;
-		
+
 		void addMessage(MessageMode mode, std::string text);
 		void composeText();
 

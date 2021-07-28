@@ -391,7 +391,7 @@ void Engine::loadCFG()
 		m_buddyHideOffline = (data == "yes" ? true : false);
 		data = cfg.fetchKey("BuddyHideGroups");
 		m_buddyHideGroups = (data == "yes" ? true : false);
-		
+
 		data = cfg.fetchKey("SortOrderBuy");
 		m_buySortMethod = SDL_static_cast(Uint8, SDL_strtoul(data.c_str(), NULL, 10));
 		m_buySortMethod = (m_buySortMethod > Shop_Sort_Weight ? Shop_Sort_Name : m_buySortMethod);
@@ -404,7 +404,7 @@ void Engine::loadCFG()
 		m_ignoreCapacity = (data == "yes" ? true : false);
 		data = cfg.fetchKey("SellEquipped");
 		m_ignoreEquiped = (data == "yes" ? false : true);
-		
+
 		data = cfg.fetchKey("LeftSidebars");
 		m_leftPanel = SDL_static_cast(Sint32, SDL_strtol(data.c_str(), NULL, 10));
 		m_leftPanel = (m_leftPanel == 0 ? GUI_PANEL_RANDOM : m_leftPanel + GUI_PANEL_EXTRA_LEFT_START - 1);
@@ -624,7 +624,7 @@ void Engine::saveCFG()
 		cfg.insertKey("BuddyHideOffline", std::string(g_buffer, SDL_static_cast(size_t, len)));
 		len = SDL_snprintf(g_buffer, sizeof(g_buffer), "%s", (m_buddyHideGroups ? "yes" : "no"));
 		cfg.insertKey("BuddyHideGroups", std::string(g_buffer, SDL_static_cast(size_t, len)));
-		
+
 		len = SDL_snprintf(g_buffer, sizeof(g_buffer), "%u", SDL_static_cast(Uint32, m_buySortMethod));
 		cfg.insertKey("SortOrderBuy", std::string(g_buffer, SDL_static_cast(size_t, len)));
 		len = SDL_snprintf(g_buffer, sizeof(g_buffer), "%u", SDL_static_cast(Uint32, m_sellSortMethod));
@@ -706,7 +706,7 @@ void Engine::run()
 		m_windowW = m_windowCachedW;
 		m_windowH = m_windowCachedH;
 	}
-	
+
 	m_window = SDL_CreateWindow(PRODUCT_NAME, m_windowX, m_windowY, m_windowW, m_windowH, windowflags);
 	if(!m_window)
 	{
@@ -730,7 +730,7 @@ void Engine::run()
 	}
 	m_windowId = SDL_GetWindowID(m_window);
 	m_controlFPS = (!m_unlimitedFPS && !m_vsync);
-	
+
 	//createwindow don't generate resize event so send one ourselves
 	UTIL_ResizeEvent(m_windowId, m_windowW, m_windowH);
 
@@ -860,7 +860,7 @@ bool Engine::init()
 	m_surface.reset();
 	if(m_engine == CLIENT_ENGINE_SOFTWARE)
 		m_surface = std::move(std::make_unique<SurfaceSoftware>());
-	#if defined(SDL_VIDEO_VULKAN)
+	#if defined(SDL_VIDEO_VULKAN) && !defined(__linux__)
 	else if(m_engine == CLIENT_ENGINE_VULKAN)
 		m_surface = std::move(std::make_unique<SurfaceVulkan>());
 	#endif
@@ -895,7 +895,7 @@ bool Engine::init()
 		m_engine = m_engines.back();
 		return false;
 	}
-	
+
 	if(!m_surface->isSupported())
 	{
 		for(std::vector<Uint8>::iterator it = m_engines.begin(), end = m_engines.end(); it != end; ++it)
@@ -1004,7 +1004,7 @@ void Engine::initFont(Uint8 font, Sint32 width, Sint32 height, Sint16 hchars, Si
 			m_charx[font][0] = -1; m_chary[font][0] = 1;
 			m_charw[font][32] = m_charw[font][160] = 4;
 			break;
-			
+
 		case CLIENT_FONT_SMALL:
 			m_charx[font][0] = m_chary[font][0] = 0;
 			m_charw[font][32] = m_charw[font][160] = 2;
@@ -1219,7 +1219,7 @@ void Engine::onKeyDown(SDL_Event& event)
 			default: break;
 		}
 	}
-	
+
 	if(m_showLogger)
 	{
 		g_logger.onKeyDown(event);
@@ -2144,7 +2144,7 @@ void Engine::onLMouseUp(Sint32 x, Sint32 y)
 					recalculateGameWindow();
 				}
 			}
-			
+
 			m_leftAddPanel = 0;
 			m_leftRemPanel = 0;
 		}
@@ -2967,7 +2967,7 @@ void Engine::redraw()
 
 	if(m_contextMenu)
 		m_contextMenu->render();
-		
+
 	m_surface->endScene();
 }
 
@@ -3913,7 +3913,7 @@ GUI_ContextMenu* Engine::createThingContextMenu(Creature* creature, ItemUI* item
 				newMenu->addSeparator();
 				newMenu->addContextMenu(CONTEXTMENU_STYLE_STANDARD, THING_EVENT_TRADE, "Trade with ...", "");
 			}
-			
+
 			if((position.y & 0x40) && g_game.containerHasParent(position.y & 0x0F))
 			{
 				m_actionDataStructure[CLIENT_ACTION_SECOND].itemId = itemui->getItemCount();
@@ -4174,7 +4174,7 @@ void Engine::removePanelWindow(GUI_PanelWindow* pPanel)
 {
 	for(std::vector<GUI_Panel*>::iterator it = m_panels.begin(), end = m_panels.end(); it != end; ++it)
 		(*it)->removePanel(pPanel, false);
-	
+
 	delete pPanel;
 }
 

@@ -146,7 +146,7 @@ unsigned char* SpriteManager::LoadSpriteSheet_BMP(const std::string& spriteFile,
 		SDL_snprintf(g_buffer, sizeof(g_buffer), "%s%s%c%u%c%s", g_basePath.c_str(), ASSETS_CATALOG, PATH_PLATFORM_SLASH, g_clientVersion, PATH_PLATFORM_SLASH, spriteFile.c_str());
 		#endif
 	}
-	
+
 	SDL_RWops* fp = SDL_RWFromFile(g_buffer, "rb");
 	if(!fp)
 		return NULL;
@@ -346,7 +346,7 @@ unsigned char* SpriteManager::LoadSprite_NEW(Uint32 spriteId, bool bgra)
 	if(it == m_spriteData.end())
 	{
 		if(!LoadSpriteSheet(spriteId, bgra))
-			return false;
+			return 0;
 
 		it = m_spriteData.find(spriteId);
 	}
@@ -490,7 +490,7 @@ bool SpriteManager::loadSprites(const char* filename)
 
 	SDL_RWread(sprites, data, 1, sizeSprites);
 	SDL_RWclose(sprites);
-	
+
 	m_cachedSprites = SDL_RWFromMem(data, SDL_static_cast(Sint32, sizeSprites));
 	if(!m_cachedSprites)
 	{

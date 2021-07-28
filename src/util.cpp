@@ -503,7 +503,6 @@ void UTIL_OpenURL(const char* url)
 	#ifdef SDL_VIDEO_DRIVER_WINDOWS
 	ShellExecuteA(GetDesktopWindow(), "open", url, NULL, NULL, SW_SHOWNORMAL);
 	#else
-	SDL_snprintf(g_buffer, sizeof(g_buffer), "xdg-open %s", apps[i], url);
 	system(g_buffer);
 	/*char* apps[] = {"xdg-open", "x-www-browser", "firefox", "chrome", "opera", "mozilla", "galeon", "konqueror", "safari", "open", NULL};
 	for(int i = 0; apps[i]; ++i)
@@ -1105,7 +1104,7 @@ bool XTEA_decrypt_SSE2(Uint8* buffer, size_t size, const Uint32* keys)
 		const __m128i data1 = _mm_shuffle_epi32(_mm_loadu_si128(SDL_reinterpret_cast(const __m128i*, buffer + readPos + 16)), _MM_SHUFFLE(3, 1, 2, 0));
 		__m128i vdata0 = _mm_unpacklo_epi64(data0, data1);
 		__m128i vdata1 = _mm_unpackhi_epi64(data0, data1);
-		
+
 		Sint32 j = 0;
 		do
 		{
@@ -1576,7 +1575,7 @@ size_t UTIL_Faststrstr_Swar32(const char* haystack, size_t haystackSize, const c
 			++j;
 		}
 	}
-	
+
 	//Since we can read ahead the haystack it is possible that we find needle somewhere we don't want
 	Continue_Result:
 	if(result <= haystackSize - needleSize)
@@ -1626,7 +1625,7 @@ size_t UTIL_Faststrstr_Swar64(const char* haystack, size_t haystackSize, const c
 			++j;
 		}
 	}
-	
+
 	//Since we can read ahead the haystack it is possible that we find needle somewhere we don't want
 	Continue_Result:
 	if(result <= haystackSize - needleSize)

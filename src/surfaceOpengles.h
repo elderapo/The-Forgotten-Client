@@ -26,6 +26,10 @@
 
 #if defined(SDL_VIDEO_RENDER_OGL_ES)
 
+#if defined(__linux__)
+#include <GL/gl.h>
+#endif
+
 #define OPENGLES_MAX_VERTICES 2048
 #define OPENGLES_MAX_INDICES (OPENGLES_MAX_VERTICES * 6 / 4)
 #if OPENGLES_MAX_INDICES >= 65500

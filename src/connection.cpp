@@ -85,6 +85,7 @@ void Connection::updateConnection()
 			m_curlHandle = SDL_reinterpret_cast(void*, curl_multi_init());
 			CURL* curl = curl_easy_init();
 			m_curlEasyHandle = SDL_reinterpret_cast(void*, curl);
+			//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 			curl_easy_setopt(curl, CURLOPT_URL, m_host);
 			curl_easy_setopt(curl, CURLOPT_PORT, m_port);
 			curl_easy_setopt(curl, CURLOPT_PROXY, m_proxy);
@@ -92,7 +93,7 @@ void Connection::updateConnection()
 			curl_easy_setopt(curl, CURLOPT_FRESH_CONNECT, 1L);
 			curl_easy_setopt(curl, CURLOPT_CONNECT_ONLY, 1L);
 			curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 60L);
-			curl_easy_setopt(curl, CURLOPT_TCP_FASTOPEN, 1L);
+			//curl_easy_setopt(curl, CURLOPT_TCP_FASTOPEN, 1L);
 			curl_easy_setopt(curl, CURLOPT_TCP_NODELAY, 1L);
 			curl_multi_add_handle(SDL_reinterpret_cast(CURLM*, m_curlHandle), curl);
 			m_connectionState = CONNECTION_STATE_CONNECTING;

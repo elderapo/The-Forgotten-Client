@@ -151,8 +151,9 @@ class Map
 
 		Creature* m_localCreature = NULL;
 		Position m_centerPosition;
-		ScreenText m_onscreenMessages[ONSCREEN_MESSAGE_LAST] = {ONSCREEN_MESSAGE_BOTTOM, ONSCREEN_MESSAGE_CENTER_LOW, ONSCREEN_MESSAGE_CENTER_HIGH, ONSCREEN_MESSAGE_TOP};
-		
+		// ScreenText m_onscreenMessages[ONSCREEN_MESSAGE_LAST] = {ONSCREEN_MESSAGE_BOTTOM, ONSCREEN_MESSAGE_CENTER_LOW, ONSCREEN_MESSAGE_CENTER_HIGH, ONSCREEN_MESSAGE_TOP};
+		ScreenText *m_onscreenMessages[OnscreenMessages::ONSCREEN_MESSAGE_LAST];
+
 		Uint32 m_magicEffectsTime = 0;
 		Uint32 m_distanceEffectsTime = 0;
 

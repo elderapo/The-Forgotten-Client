@@ -23,6 +23,7 @@
 #define __FILE_SURFACE_OPENGL_h_
 
 #include "engine.h"
+#include <GL/gl.h>
 
 #if defined(SDL_VIDEO_RENDER_OGL)
 
